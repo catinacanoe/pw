@@ -1,0 +1,65 @@
+'pw' password manager written by canoe <github link here>
+
+notes:
+- this script uses the non-standard "$MENU" variable to choose a menu app like 'tofi'
+- currently only works with hyprland
+
+
+password map:
+    the mapping from the current window's title and class, to a specific string to type
+    this file should be stored in pass-store such that 'pass map' prints it out
+
+    - we ignore empty lines and lines where the first non-whitespace character is '#'
+    - this file is read top to bottom, so put more specific cases earlier in it
+    - the class pattern can also be 'browser', 'terminal', or 'editor'
+      these will match when the current window class is exactly the same as
+      the contents of $BROWSER, $TERMINAL, or $EDITOR, respectively
+    - the keysequence is read letter by letter:
+      - lowercase letters are understood as pass entries
+        so if the pass-folder field is set to 'git',
+	when pw encounters 'u' in the keysequence, it will print 'pass git/u.*'
+	if there are multiple items in the git subfolder that start with 'u' (ambiguous case)
+	pw will ask for user input
+	special pass entry characters:
+	- '$' will try to find the pass entry that starts with the hostname
+	- '~' will do the same as '$' except with username
+	- '.' will allow user to choose (useful for delay since menus block)
+      - uppercase letters are special characters, and can be one of:
+        'T' or 'E'/'R', corresponding respectively to Tab and Enter/Return
+	you can also leave a ' ' character and pw will type the space key
+      - if the keysequence is not defined
+        pw will prompt the user to choose which pass entry should be typed
+
+    sample 'pass map' output:
+        # class /// title /// pass-folder /// keysequence
+        fi.*r /// Sign in to GitHub /// github /// pTuE
+        browser /// Github /// github
+
+    resulting behavior of map above:
+    - when 'pw' is called and the current active window class contains 'fi', followed by 'r'
+      and the window title contains 'Sign in to GitHub'
+      pw will type the output of 'pass github/p' into the active window
+      then press the Tab key, then type 'pass github/u' into the window
+      and finally press Enter
+    - if the above case did not match but the current window's class is the same as $BROWSER
+      and the window title contains 'Github', a menu will pop up,
+      containing the output of 'pass ls github' because 'github' is the pass-folder field.
+      if for example the user chooses 'email' from this list,
+      then the output of 'pass github/email' will be typed into the window
+
+usage:
+    first arg:
+        first argument should ALWAYS be the path to where the script is stored.
+	If your alias is set up correctly, you don't need to worry about this:
+	    alias my_pw_alias='/path/to/pw/default.sh /path/to/pw'
+
+    --help, -h:
+        print out this help menu
+
+    no arguments:
+        uses the password map mentioned above to determine what to do
+	and types the corresponding keysequence, asking for user input only when necessary
+
+    --interactive, -i:
+        uses the password map to put more relevant options at the top of menus
+        but does not assume anything, asks for user input at every decision
