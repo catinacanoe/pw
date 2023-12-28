@@ -104,5 +104,6 @@ vim:ft=markdown
    ```
 
    The resulting behavior will be as follows:
-    - When `pw` is called and the current active window class contains `fi`, followed by `r` and the window title contains `Sign in to GitHub`, `pw` will type the output of `pass github/p{}` (where `p{}` represents a pass entry under `github/` that starts with `p`) into the active window, then press the `Tab` key, then type `pass github/u{}` into the window, and finally press `Enter`.
-    - If the above case did not match but the current window's class is the same as `$BROWSER` and the window title contains `Github`, a menu will pop up, containing the output of `pass ls github` because `github` is the pass-folder field. If for example the user chooses `email` from this list, then the output of `pass github/email` will be typed into the active window.
+
+   - When `pw` is called and the current active window class contains `fi`, followed by `r` and the window title contains `Sign in to GitHub`, `pw` will type the output of `pass github/p{}` (where `p{}` represents a pass entry under `github/` that starts with `p`) into the active window, then press the `Tab` key, then type `pass github/u{}` into the window, and finally press `Enter`.
+   - If the above case did not match but the current window's class is the same as `$BROWSER` and the window title contains `Github`, a menu will pop up, containing the output of `pass ls github` because `github` is the pass-folder field. If for example the user chooses `email` from this list, then the output of `pass github/email` will be typed into the active window.
