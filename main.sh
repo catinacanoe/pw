@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-pw_dir="$PW_PATH"
+pw_dir="$(dirname "$0")"
 arg="$1"
 cd "$pw_dir"
 
 # if help flag passed, print manpage and exit
-[ "$arg" == "-h" ] || [ "$arg" == "--help" ] && cat "./man.txt" && exit
+[ "$arg" == "-h" ] || [ "$arg" == "--help" ] && cat "./README.md" && exit
 
 if [ "$arg" == "-i" ] || [ "$arg" == "--interactive" ]; then
     interactive='true'
