@@ -1,23 +1,23 @@
 #!/usr/bin/env bash
 
-original_dir="$PWD"
-menu="$MENU"
-pass_store="$PASSWORD_STORE_DIR"
+export original_dir="$PWD"
+export menu="$MENU"
+export pass_store="$PASSWORD_STORE_DIR"
 
-map="$(cat $pass_store/.map | sed -e '/^\s*$/d' -e '/^\s*#/d')"
-mapsep=" /// "
-class="$(hyprctl activewindow -j | jq .class | sed -e 's/^"//' -e 's/"$//')"
-title="$(hyprctl activewindow -j | jq .title | sed -e 's/^"//' -e 's/"$//')"
-[ "$class" == "$BROWSER" ] && app="browser"
-[ "$class" == "$TERMINAL" ] && app="terminal"
-[ "$class" == "$EDITOR" ] && app="editor"
+export map="$(cat $pass_store/.map | sed -e '/^\s*$/d' -e '/^\s*#/d')"
+export mapsep=" /// "
+export class="$(hyprctl activewindow -j | jq .class | sed -e 's/^"//' -e 's/"$//')"
+export title="$(hyprctl activewindow -j | jq .title | sed -e 's/^"//' -e 's/"$//')"
+[ "$class" == "$BROWSER" ] && export app="browser"
+[ "$class" == "$TERMINAL" ] && export app="terminal"
+[ "$class" == "$EDITOR" ] && export app="editor"
 
 # grep to find the pass entry that matches input, then print its contents
 pass_type() {
-    if [ -z "$(ls "$pass_store" | grep "^$pass_folder$")" ]; then
+    if [ "$(ls "$pass_store" | grep -c "^$pass_folder$")" != "1" ]; then
         pass_folder="$(ls "$pass_store" | grep "^$pass_folder")"
         if [ "$(echo "$pass_folder" | wc -l)" != "1" ]; then
-	    pass_folder="$(echo "$pass_folder" | $menu)"
+            pass_folder="$(echo "$pass_folder" | $menu)"
         fi
     fi
     [ -z "$pass_folder" ] && exit # if user clicks escape
