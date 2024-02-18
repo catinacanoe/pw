@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 export original_dir="$PWD"
-export menu="$MENU"
+export menu="$DMENU_PROGRAM"
 export pass_store="$PASSWORD_STORE_DIR"
 
 export map="$(cat $pass_store/.map | sed -e '/^\s*$/d' -e '/^\s*#/d')"

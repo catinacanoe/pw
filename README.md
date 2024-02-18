@@ -10,7 +10,7 @@ vim:ft=markdown
 
   Clone this repository: `git clone 'https://github.com/catinacanoe/pw.git'`.
   All of the functionality is stored inside `main.sh`, so all you need to do is set an alias (or anything equivalent) like this: `alias pw="/path/to/repo/pw/main.sh"` in your `.bashrc` or `.zshrc`.
-  You must also set an environment variable `$MENU` to the name of the menu program you would like `pw` to use. This program should read standard input line by line and print the chosen item to standard output. Something like `dmenu` or `tofi`.
+  You must also set an environment variable `$DMENU_PROGRAM` to the name of the menu program you would like `pw` to use. This program should read standard input line by line and print the chosen item to standard output. Something like `dmenu` or `tofi`.
 
 ## NixOS
 
@@ -20,8 +20,8 @@ vim:ft=markdown
    And with `configuration.nix`, use:
    `environment.systemPackages = [ (pkgs.writeShellScriptBin "pw" "/path/to/repo/pw/main.sh $@") ];`
    
-   To set the `$MENU` environment variable, you can put this into your `home.nix`:
-   `home.sessionVariables.MENU = "tofi";` where `tofi` is the menu program you want to use.
+   To set the `$DMENU_PROGRAM` environment variable, you can put this into your `home.nix`:
+   `home.sessionVariables.DMENU_PROGRAM = "tofi";` where `tofi` is the menu program you want to use.
 
 # Usage
 

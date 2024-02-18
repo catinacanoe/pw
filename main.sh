@@ -51,19 +51,19 @@ for (( i=0; i<${#key_sequence}; i++ )); do
     char="${key_sequence:$i:1}"
 
     if [ -z "$(echo $char | sed '/[a-z]/d')" ]; then # lowercase
-	pass_type "$char"
-	continue
+        pass_type "$char"
+        continue
     fi
 
     case "$char" in
-	'$') pass_type "$(hostname)" ;;
-	'~') pass_type "$(whoami)" ;;
-	'.') pass_type ;;
+        '$') pass_type "$(hostname)" ;;
+        '~') pass_type "$(whoami)" ;;
+        '.') pass_type ;;
 
-	'T') wkey Tab ;;
-	'E') wkey Return ;;
-	'R') wkey Return ;;
-	' ') wtype ' ' ;;
+        'T') wkey Tab && sleep 0.1 ;;
+        'E') wkey Return ;;
+        'R') wkey Return ;;
+        ' ') wtype ' ' ;;
     esac
 done
 
