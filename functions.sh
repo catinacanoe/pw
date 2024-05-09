@@ -28,7 +28,8 @@ pass_type() {
     fi
     [ -z "$pass_entry" ] && exit # if user clicks escape
 
-    wtype "$(pass "$pass_folder/$(echo "$pass_entry" | sed 's/\.gpg$//')")"
+    wl-copy "$(pass "$pass_folder/$(echo "$pass_entry" | sed 's/\.gpg$//')")"
+    wtype -M ctrl -k v -m ctrl
 }
 
 wkey() {
