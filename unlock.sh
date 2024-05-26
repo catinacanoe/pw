@@ -7,6 +7,6 @@ if [ -n "$gpgfile" ]; then
     gpg --pinentry-mode loopback --quiet -d "$gpgfile"
 fi
 
-echo lol > /tmp/gpgpass
+date > /tmp/gpgpass
 hyprctl dispatch killactive
 exit

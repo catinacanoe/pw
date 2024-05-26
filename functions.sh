@@ -29,16 +29,15 @@ pass_type() {
     [ -z "$pass_entry" ] && exit # if user clicks escape
 
     gpgfile="$(find "$HOME/.pass" | grep 'user\.gpg$' | head -n 1)"
-    out="$(gpg --pinentry-mode cancel --quiet -d "$gpgfile")"
 
-    if [ -z "$(echo "$out" | grep -v "^gpg:.*failed: Operation cancelled")" ]; then
+    while [ -z "$(gpg --pinentry-mode cancel --quiet -d "$gpgfile" | grep -v "^gpg:.*failed: Operation cancelled")" ]; do
         rm /tmp/gpgpass
         pypr show gpgpass
         while [ ! -f "/tmp/gpgpass" ]; do
             sleep 0.1
         done
         rm /tmp/gpgpass
-    fi
+    done
 
     wl-copy "$(pass "$pass_folder/$(echo "$pass_entry" | sed 's/\.gpg$//')")"
     wtype -M ctrl -k v -m ctrl
