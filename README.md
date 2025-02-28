@@ -54,7 +54,7 @@ vim:ft=markdown
    - empty lines are ignored
    - lines where the first non-whitespace character is `#` are ignored
    - lines should be in the format: `<class> /// <title> /// <pass-folder> /// <keysequence>`
-   - the class pattern can also be `browser`, `terminal`, or `editor`. These will match when the current window's class is exactly equal to the contents of `$BROWSER`, `$TERMINAL`, or `$EDITOR`, respectively
+   - the class pattern can also be `browser`, `terminal`, or `editor`. These will match when the current window's class is exactly equal to one of the lines in `$BROWSER`+`$BROWSERS`, `$TERMINAL`+`$TERMINALS`, or `$EDITOR`+`$EDITORS`, respectively
    - the file is read top to bottom, so put more specific match patterns earlier, and more general ones towards the end
 
 ## Line Format

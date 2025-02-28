@@ -8,9 +8,12 @@ export map="$(cat $pass_store/.map | sed -e '/^\s*$/d' -e '/^\s*#/d')"
 export mapsep=" /// "
 export class="$(hyprctl activewindow -j | jq .class | sed -e 's/^"//' -e 's/"$//')"
 export title="$(hyprctl activewindow -j | jq .title | sed -e 's/^"//' -e 's/"$//')"
-[ "$class" == "$BROWSER" ] && export app="browser"
-[ "$class" == "$TERMINAL" ] && export app="terminal"
-[ "$class" == "$EDITOR" ] && export app="editor"
+# [ "$class" == "$BROWSER" ] && export app="browser"
+# [ "$class" == "$TERMINAL" ] && export app="terminal"
+# [ "$class" == "$EDITOR" ] && export app="editor"
+echo -e "$BROWSER\n$BROWSERS" | grep -q "^$class$" && export app="browser"
+echo -e "$TERMINAL\n$TERMINALS" | grep -q "^$class$" && export app="terminal"
+echo -e "$EDITOR\n$EDITORS" | grep -q "^$class$" && export app="editor"
 
 # grep to find the pass entry that matches input, then print its contents
 pass_type() {
