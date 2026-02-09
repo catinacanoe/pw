@@ -7,7 +7,12 @@ export pass_store="$PASSWORD_STORE_DIR"
 export map="$(cat $pass_store/.map | sed -e '/^\s*$/d' -e '/^\s*#/d')"
 export mapsep=" /// "
 export class="$(hyprctl activewindow -j | jq .class | sed -e 's/^"//' -e 's/"$//')"
-export title="$(hyprctl activewindow -j | jq .title | sed -e 's/^"//' -e 's/"$//')"
+if [ "$class" == "org.qutebrowser.qutebrowser" ]; then
+    export title="$(hyprctl activewindow -j | jq .title | sed -e 's/^"//' -e 's/"$//' -e 's/ - qutebrowser$//') $(browser get-url | sed -e 's|^[^/]*//\([^/]*\)/.*|\[\1\]|') - qutebrowser"
+else
+    export title="$(hyprctl activewindow -j | jq .title | sed -e 's/^"//' -e 's/"$//')"
+fi
+
 # [ "$class" == "$BROWSER" ] && export app="browser"
 # [ "$class" == "$TERMINAL" ] && export app="terminal"
 # [ "$class" == "$EDITOR" ] && export app="editor"
