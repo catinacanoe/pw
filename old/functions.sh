@@ -15,6 +15,9 @@ else
     export title="$(hyprctl activewindow -j | jq .title | sed -e 's/^"//' -e 's/"$//')"
 fi
 
+echo "$(date +"%H:%M @ %S.%3N") - exported class=$class" >> ~/dl/pw.log
+echo "$(date +"%H:%M @ %S.%3N") - exported title=$title" >> ~/dl/pw.log
+
 echo "$(date +"%H:%M @ %S.%3N") - finished export of map, class, title vars" >> ~/dl/pw.log
 
 # [ "$class" == "$BROWSER" ] && export app="browser"
