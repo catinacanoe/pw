@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+echo "$(date +"%H:%M @ %S.%3N") - beggining export of map, class, title vars" >> ~/dl/pw.log
+
 export original_dir="$PWD"
 export menu="$DMENU_PROGRAM"
 export pass_store="$PASSWORD_STORE_DIR"
@@ -13,6 +15,8 @@ else
     export title="$(hyprctl activewindow -j | jq .title | sed -e 's/^"//' -e 's/"$//')"
 fi
 
+echo "$(date +"%H:%M @ %S.%3N") - finished export of map, class, title vars" >> ~/dl/pw.log
+
 # [ "$class" == "$BROWSER" ] && export app="browser"
 # [ "$class" == "$TERMINAL" ] && export app="terminal"
 # [ "$class" == "$EDITOR" ] && export app="editor"
@@ -22,6 +26,8 @@ echo -e "$EDITOR\n$EDITORS" | grep -q "^$class$" && export app="editor"
 
 # grep to find the pass entry that matches input, then print its contents
 pass_type() {
+    echo "$(date +"%H:%M @ %S.%3N") - begin pass_type()" >> ~/dl/pw.log
+
     if [ "$(ls "$pass_store" | grep -c "^$pass_folder$")" != "1" ]; then
         pass_folder="$(ls "$pass_store" | grep "^$pass_folder")"
         if [ "$(echo "$pass_folder" | wc -l)" != "1" ]; then
@@ -49,6 +55,8 @@ pass_type() {
 
     wl-copy "$(pass "$pass_folder/$(echo "$pass_entry" | sed 's/\.gpg$//')")"
     wtype -M ctrl -k v -m ctrl
+
+    echo "$(date +"%H:%M @ %S.%3N") - finish pass_type()" >> ~/dl/pw.log
 }
 
 wkey() {

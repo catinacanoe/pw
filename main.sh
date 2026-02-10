@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+echo >> ~/dl/pw.log
+echo "$(date +"%H:%M @ %S.%3N") - beggining of main.sh" >> ~/dl/pw.log
+
 pw_dir="$(dirname "$0")"
 arg="$1"
 cd "$pw_dir"
@@ -13,8 +16,13 @@ else
     interactive=''
 fi
 
+echo "$(date +"%H:%M @ %S.%3N") - beggining source of ./functions.sh" >> ~/dl/pw.log
+
 source ./functions.sh
 
+echo "$(date +"%H:%M @ %S.%3N") - finished source of ./functions.sh" >> ~/dl/pw.log
+
+echo "$(date +"%H:%M @ %S.%3N") - beginning loop through map" >> ~/dl/pw.log
 pass_folder=""
 key_sequence=""
 while IFS= read -r line; do
@@ -31,16 +39,19 @@ while IFS= read -r line; do
 	key_sequence="$(echo "$line" | awk -F "$mapsep" '{ print $4 }')"
 	break
 done <<< "$map"
+echo "$(date +"%H:%M @ %S.%3N") - finish loop through map" >> ~/dl/pw.log
 
+echo "$(date +"%H:%M @ %S.%3N") - possibly spawning interactive menu" >> ~/dl/pw.log
 if [ -z "$pass_folder" ]; then # we did not match, pass_folder is empty, need input
     pass_folder="$(ls "$pass_store" | $menu)"
 elif [ -n "$interactive" ]; then # we did match, but interactive mode forces menu
     full_list="$(echo "$pass_folder" && echo " " && ls "$pass_store")"
     pass_folder="$(echo "$full_list" | $menu)"
 fi
+echo "$(date +"%H:%M @ %S.%3N") - possibly closing interactive menu" >> ~/dl/pw.log
 [ -z "$pass_folder" ] && exit # just an assert
 
-# if key sequence is blank, let user choose it, then type and exit
+# if key sequence is blank, let user choose which entry to print, then type and exit
 if [ -z "$key_sequence" ] || [ -n "$interactive" ]; then
     pass_type
     exit
