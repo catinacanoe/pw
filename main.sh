@@ -2,6 +2,7 @@
 # NOTE potential optimization: could be cut time waiting for gpg to decrypt by preloading passwords asynchronously
 
 # comment/uncomment these to disable/enable logging
+
 # echo >> /tmp/pw.log
 function log() {
     # echo "$1 $(date +"%H:%M @ %S.%3N") $1 $2" >> /tmp/pw.log
@@ -11,7 +12,7 @@ function log() {
 log F "beggining of main.sh"
 
 #####################################
-# DEFINE FUNCTION TO UNLOCK GPG KEY #
+# FUNCTIONS TO DEAL WITH GPG UNLOCK #
 #####################################
 
 GPG_TEST_FILE="$PASSWORD_STORE_DIR/blank.gpg"
@@ -89,9 +90,9 @@ fi
 log . "map_title='$map_title'"
 log . "map_class='$map_class'"
 
-########################
-# SEARCH FOR MAP ENTRY #
-########################
+#################################
+# SEARCH & PARSE MAP FILE ENTRY #
+#################################
 awk_result="$(
 awk -F "$MAP_FILE_SEPARATOR" -v c="$map_class" -v t="$map_title" '
 /^[[:space:]]*$/ { next } # skip empty line
@@ -104,9 +105,14 @@ log . "awk_result='$awk_result'"
 
 pass_entry_folder_fragment="${awk_result/ ||| */}"
 pass_entry_sequence="${awk_result/* ||| /}"
+if [ -z "$pass_entry_sequence" ] || (( interactive )); then pass_entry_sequence="."; fi
 
 log . "pass_entry_folder_fragment='$pass_entry_folder_fragment'"
 log . "pass_entry_sequence='$pass_entry_sequence'"
+
+###################################
+# CHOOSE PASS FOLDER FROM MATCHES #
+###################################
 
 pass_entry_folder_matches=( "$PASSWORD_STORE_DIR/$pass_entry_folder_fragment"* )
 
@@ -130,8 +136,6 @@ log . "pass_entry_folder='$pass_entry_folder'"
 
 [ -z "$pass_entry_folder" ] && log E "wasnt able to choose a pass folder, exiting" && exit
 [ "$pass_entry_folder" == "$PASSWORD_STORE_DIR/" ] && log E "wasnt able to choose a pass folder, exiting" && exit
-if [ -z "$pass_entry_sequence" ] || (( interactive )); then pass_entry_sequence="."; fi
-
 
 ######################################
 # DEFINE FUNCTION TO TYPE PASS ENTRY #
@@ -157,21 +161,23 @@ function select_and_type_pass_entry() {
     else entry="$(printf '%s\n' "${entry_matches[@]##*/}" | sed 's|.gpg$||' | $DMENU_PROGRAM)"
     fi
 
+    [ ! -f "$folder/$entry.gpg" ] && log E "ERROR NOT A FILE: '$folder/$entry.gpg'" && exit
     log . "entry='$entry'"
 
-    [ ! -f "$folder/$entry.gpg" ] && log E "ERROR NOT A FILE: '$folder/$entry.gpg'" && exit
-
+    # wait for async gpg unlock check to complete
     if [ "$gpg_unlocked" = -1 ]; then
         log I "BLOCKED: waiting for check_gpg_unlocked() to exit"
         gpg_unlocked="$(cat "$BLOCK_CHECK_GPG_FIFO")" # wait for check_gpg_unlocked to finish
         log I "UNBLOCKED"
     fi
 
+    # if locked, unlock
     if (( ! gpg_unlocked )); then
         log I "gpg is locked, unlocking manually"
         unlock_gpg;
     fi
 
+    # copy and paste password
     log I "copying password into clipboard"
     wl-copy "$(pass "${folder##*/}/$entry")"
 
@@ -184,15 +190,15 @@ function select_and_type_pass_entry() {
     log F "select_and_type_pass_entry FINISH"
 }
 
+##########################
+# PROCESS ENTRY SEQUENCE #
+##########################
+
 # takes 1=<key name>
 # small helper to type keys like Tab & Return
 function type_key() {
     wtype -P "$1" -p "$1"
 }
-
-##########################
-# PROCESS ENTRY SEQUENCE #
-##########################
 
 for (( i=0; i<${#pass_entry_sequence}; i++ )); do
     char="${pass_entry_sequence:$i:1}"
@@ -220,7 +226,5 @@ done
 log I "clearing clipboard to help with security"
 wl-copy "cleared by pw.sh at $(date +"%H:%M @ %S.%3N")"
 
-# TODO IF INTERACTIVE, MAKE SURE YOU CHOOSE FOLDER MANUALLY '.'
-
-# to prevent error spam below (TODO DELETE)
-echo "$interactive"
+log I "cleaning up fifo '$BLOCK_CHECK_GPG_FIFO'"
+rm "$BLOCK_CHECK_GPG_FIFO" > /dev/null
