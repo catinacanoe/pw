@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
+# NOTE potential optimization: could be cut time waiting for gpg to decrypt by preloading passwords asynchronously
 
 # comment/uncomment these to disable/enable logging
-echo >> ~/dl/pw.log
+# echo >> /tmp/pw.log
 function log() {
-    echo "$1 $(date +"%H:%M @ %S.%3N") $1 $2" >> ~/dl/pw.log
+    # echo "$1 $(date +"%H:%M @ %S.%3N") $1 $2" >> /tmp/pw.log
     true
 }
 
@@ -128,6 +129,7 @@ fi
 log . "pass_entry_folder='$pass_entry_folder'"
 
 [ -z "$pass_entry_folder" ] && log E "wasnt able to choose a pass folder, exiting" && exit
+[ "$pass_entry_folder" == "$PASSWORD_STORE_DIR/" ] && log E "wasnt able to choose a pass folder, exiting" && exit
 if [ -z "$pass_entry_sequence" ] || (( interactive )); then pass_entry_sequence="."; fi
 
 
