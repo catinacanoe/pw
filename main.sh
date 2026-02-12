@@ -223,8 +223,8 @@ for (( i=0; i<${#pass_entry_sequence}; i++ )); do
     esac
 done
 
-log I "clearing clipboard to help with security"
-wl-copy "cleared by pw.sh at $(date +"%H:%M @ %S.%3N")"
-
 log I "cleaning up fifo '$BLOCK_CHECK_GPG_FIFO'"
 rm "$BLOCK_CHECK_GPG_FIFO" > /dev/null
+
+log I "clearing clipboard to help with security"
+sleep 0.5 && wl-copy "cleared by pw.sh at $(date +"%H:%M @ %S.%3N")" &
